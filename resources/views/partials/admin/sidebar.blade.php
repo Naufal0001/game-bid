@@ -5,7 +5,7 @@
 
     <nav class="flex-1 p-4 space-y-3">
 
-        <a href="#"
+        <a href="{{ route('admin.dashboard') }}"
             class="block px-4 py-3 bg-white border-3 border-black shadow-neo font-bold hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all">
             Dashboard
         </a>
@@ -15,9 +15,9 @@
             Users
         </a>
 
-        <a href="#"
+        <a href="{{ route('admin.users.verify.index') }}"
             class="block px-4 py-3 bg-transparent border-3 border-transparent hover:bg-white hover:border-black hover:shadow-neo font-bold transition-all">
-            Settings
+            User Verification
         </a>
 
     </nav>
