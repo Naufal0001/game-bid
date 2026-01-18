@@ -12,9 +12,7 @@ use App\Http\Controllers\Admin\PaymentVerificationController;
 use App\Http\Controllers\Admin\UserVerificationController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('welcome');
-})->name('home');
+Route::get('/', [HomeController::class, 'index'])->name('home');
 
 Route::get('/auctions', [AuctionController::class, 'index'])
     ->name('auctions.index');
@@ -27,8 +25,8 @@ Route::middleware(['auth', 'role:admin'])
     ->name('admin.')
     ->group(function () {
 
-        Route::get('/home', [AdminDashboardController::class, 'index'])
-            ->name('home');
+        Route::get('/dashboard', [AdminDashboardController::class, 'index'])
+            ->name('dashboard');
 
         Route::resource('auctions', AdminAuctionController::class)
             ->except(['show']);
