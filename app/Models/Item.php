@@ -26,7 +26,7 @@ class Item extends Model
     // Item punya kategori
     public function category()
     {
-        return $this->belongsTo(Category::class);
+        return $this->belongsTo(Category::class, 'category_id');
     }
 
     // Item bisa dilelang
