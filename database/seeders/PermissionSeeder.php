@@ -25,6 +25,7 @@ class PermissionSeeder extends Seeder
             'bid auction',
             'buyout auction',
             'view transaction',
+            'view auction',
         ];
 
         $sellerPermissions = [
