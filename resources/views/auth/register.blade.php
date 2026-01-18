@@ -1,52 +1,82 @@
 <x-guest-layout>
-    <form method="POST" action="{{ route('register') }}">
-        @csrf
-
-        <!-- Name -->
-        <div>
-            <x-input-label for="name" :value="__('Name')" />
-            <x-text-input id="name" class="block mt-1 w-full" type="text" name="name" :value="old('name')" required autofocus autocomplete="name" />
-            <x-input-error :messages="$errors->get('name')" class="mt-2" />
+    <div class="bg-[#FFFBEB] p-6 sm:p-10 border-[4px] border-black shadow-[10px_10px_0px_0px_rgba(0,0,0,1)]">
+        
+        <div class="mb-6 text-center">
+            <h2 class="text-5xl font-black uppercase tracking-tighter leading-none">
+                <span class="text-black text-2xl">JOIN</span><br>
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-teal-400 via-purple-500 to-pink-500" 
+                      style="-webkit-text-stroke: 2px black;">
+                    GAMEBID
+                </span>
+            </h2>
+            <div class="h-1.5 w-16 bg-black mx-auto mt-3"></div>
+            <p class="font-bold text-black text-sm mt-3 tracking-wide">Create Your Account</p>
         </div>
 
-        <!-- Email Address -->
-        <div class="mt-4">
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autocomplete="username" />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
-        </div>
+        <form method="POST" action="{{ route('register') }}" class="space-y-4">
+            @csrf
 
-        <!-- Password -->
-        <div class="mt-4">
-            <x-input-label for="password" :value="__('Password')" />
+            <div class="group">
+                <div class="bg-white border-[4px] border-black p-0 transition-all focus-within:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
+                    <input id="name" class="block w-full border-none focus:ring-0 font-bold p-4 text-sm placeholder-gray-500 bg-transparent text-black" 
+                           type="text" name="name" :value="old('name')" 
+                           placeholder="Full Name" required autofocus autocomplete="name" />
+                </div>
+                <x-input-error :messages="$errors->get('name')" class="mt-1 font-bold text-xs text-red-600" />
+            </div>
 
-            <x-text-input id="password" class="block mt-1 w-full"
-                            type="password"
-                            name="password"
-                            required autocomplete="new-password" />
+            <div class="group">
+                <div class="bg-white border-[4px] border-black p-0 transition-all focus-within:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
+                    <input id="email" class="block w-full border-none focus:ring-0 font-bold p-4 text-sm placeholder-gray-500 bg-transparent text-black" 
+                           type="email" name="email" :value="old('email')" 
+                           placeholder="Email Address" required autocomplete="username" />
+                </div>
+                <x-input-error :messages="$errors->get('email')" class="mt-1 font-bold text-xs text-red-600" />
+            </div>
 
-            <x-input-error :messages="$errors->get('password')" class="mt-2" />
-        </div>
+            <div class="group">
+                <div class="bg-white border-[4px] border-black p-0 transition-all focus-within:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
+                    <input id="password" class="block w-full border-none focus:ring-0 font-bold p-4 text-sm placeholder-gray-500 bg-transparent text-black"
+                           type="password" name="password"
+                           placeholder="Password" required autocomplete="new-password" />
+                </div>
+                <x-input-error :messages="$errors->get('password')" class="mt-1 font-bold text-xs text-red-600" />
+            </div>
 
-        <!-- Confirm Password -->
-        <div class="mt-4">
-            <x-input-label for="password_confirmation" :value="__('Confirm Password')" />
+            <div class="group">
+                <div class="bg-white border-[4px] border-black p-0 transition-all focus-within:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
+                    <input id="password_confirmation" class="block w-full border-none focus:ring-0 font-bold p-4 text-sm placeholder-gray-500 bg-transparent text-black"
+                           type="password" name="password_confirmation"
+                           placeholder="Confirm Password" required autocomplete="new-password" />
+                </div>
+                <x-input-error :messages="$errors->get('password_confirmation')" class="mt-1 font-bold text-xs text-red-600" />
+            </div>
 
-            <x-text-input id="password_confirmation" class="block mt-1 w-full"
-                            type="password"
-                            name="password_confirmation" required autocomplete="new-password" />
+            <button type="submit" class="w-full bg-pink-500 text-white font-black py-4 uppercase italic text-xl border-[4px] border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all active:scale-95 mt-2">
+                Register
+            </button>
 
-            <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
-        </div>
+            <div class="flex items-center justify-center pt-2">
+                <span class="font-bold text-xs mr-1">Already have an account?</span>
+                <a class="font-bold text-xs text-pink-600 hover:text-pink-800 underline decoration-2 underline-offset-4" href="{{ route('login') }}">
+                    Log In
+                </a>
+            </div>
 
-        <div class="flex items-center justify-end mt-4">
-            <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('login') }}">
-                {{ __('Already registered?') }}
+            <div class="flex items-center py-2">
+                <div class="flex-grow h-1 bg-black"></div>
+                <span class="mx-4 font-black text-xs">OR</span>
+                <div class="flex-grow h-1 bg-black"></div>
+            </div>
+
+            <a href="{{ url('auth/google') }}" class="w-full flex justify-center items-center bg-yellow-400 border-[4px] border-black text-black font-black py-4 uppercase text-sm shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all active:scale-95">
+                <img src="https://www.svgrepo.com/show/355037/google.svg" class="w-5 h-5 mr-3" alt="Google">
+                Sign up with Gmail
             </a>
 
-            <x-primary-button class="ms-4">
-                {{ __('Register') }}
-            </x-primary-button>
-        </div>
-    </form>
+            <a href="{{ url('/') }}" class="w-full flex justify-center items-center bg-white border-[4px] border-black text-black font-black py-3 uppercase text-sm shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all active:scale-95 mt-4">
+                ← Back to Home
+            </a>
+        </form>
+    </div>
 </x-guest-layout>
