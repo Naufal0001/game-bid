@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Auction;
-use App\Models\Bid; // <--- PENTING: Jangan lupa import Model Bid
+use App\Models\Bid;
+use App\Models\Item;
+use App\Models\Category;
 use Illuminate\Http\Request;
 
 class AuctionController extends Controller
@@ -15,24 +17,17 @@ class AuctionController extends Controller
     {
         // 1. Mulai Query Builder dengan Eager Loading
         $query = Auction::with(['item.category', 'bids'])
-            ->where('status', 'active'); // Tetap hanya ambil yang aktif
+            ->where('status', 'active'); 
 
-        // [FIXED] LOGIKA PENCARIAN
-        // ==================================================
+        // [LOGIKA PENCARIAN]
         if ($request->filled('search')) {
             $search = $request->search;
-            
-            // Kita gunakan whereHas untuk memfilter Auction berdasarkan isi tabel Item
             $query->whereHas('item', function($q) use ($search) {
-                // Cari kata kunci di kolom 'item_name' milik tabel items
                 $q->where('item_name', 'LIKE', "%{$search}%");
             });
         }
 
-        // ==================================================
-        // FITUR FILTERING
-        // ==================================================
-
+        // [FITUR FILTERING]
         // 2. Filter Kategori Game
         if ($request->filled('game')) {
             $query->whereHas('item.category', function($q) use ($request) {
@@ -80,7 +75,7 @@ class AuctionController extends Controller
     }
 
     /**
-     * [BARU] Memproses tawaran (Bid) dari user
+     * Memproses tawaran (Bid) dari user
      */
     public function bid(Request $request, Auction $auction)
     {
@@ -95,10 +90,9 @@ class AuctionController extends Controller
         }
 
         // 3. Tentukan harga minimal bid berikutnya
-        // Jika belum ada bid, min = start_price. Jika ada, min = current_price + min_increment
         $minBid = $auction->current_price 
             ? $auction->current_price + $auction->min_increment 
-            : $auction->start_price;
+            : $auction->starting_price; 
 
         if ($request->bid_price < $minBid) {
             return back()->with('error', 'Tawaran terlalu rendah! Minimal: Rp ' . number_format($minBid, 0, ',', '.'));
@@ -107,7 +101,7 @@ class AuctionController extends Controller
         // 4. Update harga di tabel Auctions
         $auction->update([
             'current_price' => $request->bid_price,
-            'winner_id' => auth()->id(), // Set pemenang sementara
+            'winner_id' => auth()->id(),
         ]);
 
         // 5. Simpan riwayat ke tabel Bids
@@ -122,7 +116,7 @@ class AuctionController extends Controller
     }
 
     /**
-     * [BARU] Memproses pembelian langsung (Buyout)
+     * Memproses pembelian langsung (Buyout)
      */
     public function buyout(Auction $auction)
     {
@@ -139,13 +133,89 @@ class AuctionController extends Controller
         $auction->update([
             'status' => 'closed',
             'winner_id' => auth()->id(),
-            'current_price' => $auction->buyout_price, // Harga akhir = harga buyout
-            'end_time' => now(), // Waktu berakhir dimajukan ke sekarang
+            'current_price' => $auction->buyout_price,
+            'end_time' => now(),
         ]);
-
-        // (Opsional: Disini Anda bisa menambahkan logika Transaksi/Invoice)
 
         return redirect()->route('auctions.show', $auction->id)
             ->with('success', 'Selamat! Anda berhasil memenangkan item ini via Buyout!');
+    }
+
+    // =========================================================================
+    // FITUR MY AUCTIONS & CREATE (UPDATED FOR INVENTORY SYSTEM)
+    // =========================================================================
+
+    /**
+     * Menampilkan halaman "My Auctions"
+     */
+    public function myAuctions()
+    {
+        $auctions = Auction::whereHas('item', function($query) {
+            $query->where('user_id', auth()->id());
+        })->with('item')->latest()->get();
+
+        return view('auction.my_auctions', compact('auctions'));
+    }
+
+    /**
+     * Menampilkan Form Buat Auction (Pilih Item dari Inventory)
+     */
+    public function create()
+    {
+        // Cek status user
+        if (auth()->user()->status !== 'active') { 
+            return redirect()->route('auctions.my_auctions')
+                ->with('error', 'Akun belum verifikasi.');
+        }
+
+        // AMBIL ITEM YANG:
+        // 1. Milik user yang login
+        // 2. Status item 'approved' (Terverifikasi)
+        // 3. TIDAK sedang dilelang (untuk mencegah double auction pada item yang sama)
+        $items = Item::where('user_id', auth()->id())
+                    ->where('status', 'approved') 
+                    ->whereDoesntHave('auctions', function($q) {
+                        $q->where('status', 'active'); 
+                    })
+                    ->get();
+
+        return view('auction.create', compact('items'));
+    }
+
+    /**
+     * Menyimpan Auction Baru (Link ke Item yang sudah ada)
+     */
+    public function store(Request $request)
+    {
+        // 1. Validasi
+        $request->validate([
+            'item_id'       => 'required|exists:items,id', // Pilih ID Item
+            'start_price'   => 'required|numeric|min:0',
+            'buyout_price'  => 'required|numeric|gt:start_price',
+            'end_time'      => 'required|date|after:now',
+        ]);
+
+        // 2. Ambil Item
+        $item = Item::findOrFail($request->item_id);
+
+        // 3. Validasi Kepemilikan & Status (Security Check)
+        if($item->user_id !== auth()->id() || $item->status !== 'approved') {
+            return back()->with('error', 'Item tidak valid atau belum diverifikasi.');
+        }
+
+        // 4. Buat Auction
+        Auction::create([
+            'item_id'        => $item->id,
+            'user_id'        => auth()->id(),
+            'starting_price' => $request->start_price,
+            'current_price'  => null,
+            'buyout_price'   => $request->buyout_price,
+            'min_increment'  => 10000,
+            'start_time'     => now(),
+            'end_time'       => $request->end_time,
+            'status'         => 'active',
+        ]);
+
+        return redirect()->route('auctions.my_auctions')->with('success', 'Lelang berhasil diterbitkan!');
     }
 }

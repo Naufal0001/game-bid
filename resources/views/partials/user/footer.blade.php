@@ -37,8 +37,8 @@
                     <li class="flex items-start">
                         <svg class="w-6 h-6 mr-3 text-purple-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
                         <div>
-                            <p class="font-black uppercase text-sm text-gray-500">WhatsApp</p>
-                            <p class="font-bold hover:text-green-400 cursor-pointer">+62 812-3456-7890</p>
+                            <p class="font-black uppercase text-sm text-gray-500">WhatsApp (Arik)</p>
+                            <p class="font-bold hover:text-green-400 cursor-pointer">+6282120014864</p>
                         </div>
                     </li>
                 </ul>
@@ -47,10 +47,10 @@
             <div>
                 <h3 class="text-2xl font-black uppercase mb-6 text-pink-500 border-b-4 border-white inline-block pb-1">Stalk Us</h3>
                 <div class="grid grid-cols-2 gap-4">
-                    <a href="#" class="flex items-center justify-center h-16 bg-white text-black border-4 border-transparent hover:border-yellow-400 hover:bg-black hover:text-white transition-all font-black uppercase shadow-[4px_4px_0px_0px_#ec4899]">
+                    <a href="https://www.facebook.com/ayidd.2025" class="flex items-center justify-center h-16 bg-white text-black border-4 border-transparent hover:border-yellow-400 hover:bg-black hover:text-white transition-all font-black uppercase shadow-[4px_4px_0px_0px_#ec4899]">
                         FACEBOOK
                     </a>
-                    <a href="#" class="flex items-center justify-center h-16 bg-white text-black border-4 border-transparent hover:border-teal-400 hover:bg-black hover:text-white transition-all font-black uppercase shadow-[4px_4px_0px_0px_#2dd4bf]">
+                    <a href="https://youtu.be/naz0-szzYXk?si=6pO80I3lleiE6N8H" class="flex items-center justify-center h-16 bg-white text-black border-4 border-transparent hover:border-teal-400 hover:bg-black hover:text-white transition-all font-black uppercase shadow-[4px_4px_0px_0px_#2dd4bf]">
                         TWITTER
                     </a>
                     <a href="#" class="flex items-center justify-center h-16 bg-white text-black border-4 border-transparent hover:border-purple-500 hover:bg-black hover:text-white transition-all font-black uppercase shadow-[4px_4px_0px_0px_#a855f7]">
@@ -66,7 +66,7 @@
 
         <div class="border-t-2 border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center">
             <p class="font-bold text-gray-500 text-sm">
-                &copy; 2024 GAMEBID INC. MADE WITH 💀 AND ☕.
+                &copy; 2026 GAMEBID INC. MADE WITH 💀 AND ☕.
             </p>
             <div class="mt-4 md:mt-0 flex gap-6">
                 <a href="#" class="text-gray-500 font-bold hover:text-white hover:underline">Privacy</a>
