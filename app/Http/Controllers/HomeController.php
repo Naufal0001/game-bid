@@ -3,13 +3,18 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Auction; // <--- Jangan lupa import Model ini
 
-class DashboardController extends Controller
+class HomeController extends Controller
 {
+    /**
+     * Menampilkan halaman depan (Landing Page).
+     */
     public function index()
     {
-        $user = Auth::user();
+        // Logika yang tadinya ada di route, sekarang pindah ke sini
+        $auctions = Auction::latest()->take(6)->get();
 
-        return view('home', compact('user'));
+        return view('welcome', compact('auctions'));
     }
 }
