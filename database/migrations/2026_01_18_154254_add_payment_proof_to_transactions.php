@@ -12,8 +12,16 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('transactions', function (Blueprint $table) {
-            //
-        });
+    $table->string('payment_proof')->nullable();
+    $table->enum('status', [
+        'pending',
+        'waiting_verification',
+        'paid',
+        'delivered',
+        'completed',
+        'rejected'
+    ])->change();
+});
     }
 
     /**

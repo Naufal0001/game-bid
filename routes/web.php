@@ -58,12 +58,12 @@ Route::middleware(['auth'])->group(function () {
         ->middleware('permission:buyout auction')
         ->name('auctions.buyout');
 
-    Route::get('/transactions', [TransactionController::class, 'index'])
-        ->middleware('permission:view transaction')
-        ->name('transactions.index');
+    Route::get('/transactions/{transaction}', [PaymentController::class, 'show'])
+        ->name('transactions.show');
     
-    Route::get('/payment/{id}', [PaymentController::class, 'form']);
-    Route::post('/payment/{id}', [PaymentController::class, 'submit']);
+    Route::post('/transactions/{transaction}/upload-proof',
+        [PaymentController::class, 'uploadProof']
+        )->name('transactions.uploadProof');
 
     Route::get('/profile', [ProfileController::class, 'edit'])
         ->name('profile.edit');

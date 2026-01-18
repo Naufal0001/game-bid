@@ -2,36 +2,33 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Transaction;
 use Illuminate\Http\Request;
 
 class PaymentController extends Controller
 {
-    public function form($transactionId)
+    public function show(Transaction $transaction)
     {
-        $transaction = Transaction::where('buyer_id', auth()->id())
-            ->findOrFail($transactionId);
+        abort_if($transaction->buyer_id !== auth()->id(), 403);
 
-        return view('payments.form', compact('transaction'));
+        return view('transactions.show', compact('transaction'));
     }
 
-    public function submit(Request $request, $transactionId)
+    public function uploadProof(Request $request, Transaction $transaction)
     {
+        abort_if($transaction->buyer_id !== auth()->id(), 403);
+
         $request->validate([
-            'method' => 'required',
-            'proof' => 'required|image|max:2048'
+            'payment_proof' => 'required|image|max:2048'
         ]);
 
-        $path = $request->file('proof')->store('payments', 'public');
+        $path = $request->file('payment_proof')->store('payment_proofs', 'public');
 
-        Payment::create([
-            'transaction_id' => $transactionId,
-            'user_id' => auth()->id(),
-            'method' => $request->method,
-            'proof' => $path,
-            'status' => 'pending'
+        $transaction->update([
+            'payment_proof' => $path,
+            'status' => 'waiting_verification'
         ]);
 
-        return redirect()->back()->with('success', 'Pembayaran dikirim, menunggu verifikasi admin.');
+        return back()->with('success', 'Bukti pembayaran berhasil dikirim');
     }
 }
-
