@@ -25,8 +25,8 @@ Route::middleware(['auth', 'role:admin'])
     ->name('admin.')
     ->group(function () {
 
-        Route::get('/home', [AdminDashboardController::class, 'index'])
-            ->name('home');
+        Route::get('/dashboard', [AdminDashboardController::class, 'index'])
+            ->name('dashboard');
 
         Route::resource('auctions', AdminAuctionController::class)
             ->except(['show']);
