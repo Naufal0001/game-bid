@@ -5,8 +5,10 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\AuctionController;
 use App\Http\Controllers\BidController;
 use App\Http\Controllers\TransactionController;
+use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\Admin\AuctionController as AdminAuctionController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
+use App\Http\Controllers\Admin\PaymentVerificationController;
 use App\Http\Controllers\Admin\UserVerificationController;
 use Illuminate\Support\Facades\Route;
 
@@ -61,6 +63,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/transactions', [TransactionController::class, 'index'])
         ->middleware('permission:view transaction')
         ->name('transactions.index');
+    
+    Route::get('/payment/{id}', [PaymentController::class, 'form']);
+    Route::post('/payment/{id}', [PaymentController::class, 'submit']);
 
     Route::get('/profile', [ProfileController::class, 'edit'])
         ->name('profile.edit');

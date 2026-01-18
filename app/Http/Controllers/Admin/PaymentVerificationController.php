@@ -29,4 +29,3 @@ class PaymentVerificationController extends Controller
         return back()->with('error', 'Pembayaran ditolak.');
     }
 }
-
