@@ -30,7 +30,6 @@ class DatabaseSeeder extends Seeder
         AuctionSeeder::class,
         BidSeeder::class,
         TransactionSeeder::class,
-        PermissionSeeder::class,
     ]);
     }
 }
