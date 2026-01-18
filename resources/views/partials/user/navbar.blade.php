@@ -8,16 +8,48 @@
             </div>
 
             @auth
-            <div class="hidden md:flex items-center gap-1 absolute left-1/2 transform -translate-x-1/2">
-                <a href="{{ route('auctions.index') }}" class="px-4 py-2 font-bold uppercase border-2 border-transparent hover:bg-black hover:text-white hover:border-black transition-all transform hover:-translate-y-1">
+            <div class="hidden md:flex items-center gap-4 absolute left-1/2 transform -translate-x-1/2">
+                
+                {{-- 1. KATALOG LELANG (Publik) --}}
+                <a href="{{ route('auctions.index') }}" 
+                   class="px-4 py-2 font-black uppercase border-2 border-transparent transition-all
+                   {{ request()->routeIs('auctions.index') 
+                      ? 'bg-black text-white' 
+                      : 'text-black hover:bg-black hover:text-white' 
+                   }}">
                     Auctions
                 </a>
-                <a href="{{ route('items.index') }}" class="px-4 py-2 font-bold uppercase border-2 border-transparent hover:bg-black hover:text-white hover:border-black transition-all transform hover:-translate-y-1">
+
+                {{-- 2. LELANG SAYA (Tempat tombol "+ Buat Auction" berada) --}}
+                <a href="{{ route('auctions.my_auctions') }}" 
+                   class="px-4 py-2 font-black uppercase border-2 border-transparent transition-all
+                   {{ request()->routeIs('auctions.my_auctions') || request()->routeIs('auctions.create')
+                      ? 'bg-black text-white' 
+                      : 'text-black hover:bg-black hover:text-white' 
+                   }}">
+                    My Auctions
+                </a>
+
+                {{-- 3. INVENTORY SAYA (Tempat Upload Item) --}}
+                <a href="{{ route('items.index') }}" 
+                   class="px-4 py-2 font-black uppercase border-2 border-transparent transition-all
+                   {{ request()->routeIs('items.*') 
+                      ? 'bg-black text-white' 
+                      : 'text-black hover:bg-black hover:text-white' 
+                   }}">
                     My Items
                 </a>
-                <a href="{{ route('history.index') }}" class="px-4 py-2 font-bold uppercase border-2 border-transparent hover:bg-black hover:text-white hover:border-black transition-all transform hover:-translate-y-1">
+
+                {{-- 4. HISTORY --}}
+                <a href="{{ route('history.index') }}" 
+                   class="px-4 py-2 font-black uppercase border-2 border-transparent transition-all
+                   {{ request()->routeIs('history.*') 
+                      ? 'bg-black text-white' 
+                      : 'text-black hover:bg-black hover:text-white' 
+                   }}">
                     History
                 </a>
+
             </div>
             @endauth
 

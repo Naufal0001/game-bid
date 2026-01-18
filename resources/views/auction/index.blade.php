@@ -89,7 +89,7 @@
                             <input type="text" 
                                    name="search" 
                                    value="{{ request('search') }}" 
-                                   placeholder="Cari item yang kamu butuhkan...")" 
+                                   placeholder="Cari item yang kamu butuhkan..." 
                                    class="w-full pl-12 pr-4 py-4 border-4 border-black font-bold text-lg uppercase focus:outline-none focus:bg-white focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all placeholder-gray-400">
                         </div>
 
@@ -98,6 +98,7 @@
                         </button>
                     </div>
                 </form>
+
                 @if($auctions->count() > 0)
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         @foreach($auctions as $auction)
@@ -127,9 +128,18 @@
                                         <p class="text-xs text-gray-500 font-bold line-clamp-2 mb-2">
                                             {{ $auction->item->description ?? 'No description' }}
                                         </p>
+                                        
+                                        {{-- [MODIFIKASI] Logic Timer diperbaiki di sini --}}
                                         <p class="text-xs font-bold text-gray-400">
-                                            Ends: <span class="text-red-500">{{ $auction->end_time ? \Carbon\Carbon::parse($auction->end_time)->diffForHumans() : '-' }}</span>
+                                            Ends: 
+                                            <span class="text-red-500 auction-timer" 
+                                                  data-end="{{ $auction->end_time }}" 
+                                                  data-status="{{ $auction->status }}">
+                                                Checking...
+                                            </span>
                                         </p>
+                                        {{-- [AKHIR MODIFIKASI] --}}
+
                                     </div>
 
                                     <div class="mt-4 pt-4 border-t-2 border-dashed border-gray-300">
@@ -163,4 +173,46 @@
         </div>
     </div>
 </div>
+
+{{-- SCRIPT TAMBAHAN UNTUK TIMER (TANPA MENGUBAH VISUAL) --}}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const timers = document.querySelectorAll('.auction-timer');
+
+        function updateTimers() {
+            const now = new Date().getTime();
+
+            timers.forEach(timer => {
+                const endTime = new Date(timer.getAttribute('data-end')).getTime();
+                const status = timer.getAttribute('data-status');
+                const distance = endTime - now;
+
+                if (status !== 'active') {
+                    timer.innerHTML = "SELESAI";
+                    // Menjaga class text-red-500 dari design asli, atau bisa diubah warnanya jika mau
+                    // timer.classList.remove('text-red-500'); 
+                    // timer.classList.add('text-gray-500');
+                    return;
+                }
+
+                if (distance < 0) {
+                    timer.innerHTML = "EXPIRED";
+                } else {
+                    const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                    const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                    const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                    
+                    let output = "";
+                    if(days > 0) output += days + "d ";
+                    output += hours + "h " + minutes + "m";
+                    
+                    timer.innerHTML = output;
+                }
+            });
+        }
+
+        updateTimers();
+        setInterval(updateTimers, 60000); // Update setiap 1 menit agar tidak berat
+    });
+</script>
 @endsection

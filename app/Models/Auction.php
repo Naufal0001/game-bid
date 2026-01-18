@@ -48,6 +48,7 @@ class Auction extends Model
         return $this->belongsTo(User::class, 'winner_id');
     }
 
+    // Relasi ke Transaksi
     public function transaction()
     {
         return $this->hasOne(Transaction::class);

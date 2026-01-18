@@ -3,11 +3,16 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\AuctionController;
-use App\Http\Controllers\BidController;
 use App\Http\Controllers\TransactionController;
+use App\Http\Controllers\ItemController;
+use App\Http\Controllers\HistoryController;
+// Admin Controllers
 use App\Http\Controllers\Admin\AuctionController as AdminAuctionController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\UserVerificationController;
+use App\Http\Controllers\Admin\ItemController as AdminItemController;
+use App\Http\Controllers\Admin\TransactionController as AdminTransactionController; // <--- [BARU] Controller Transaksi Admin
+
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -21,8 +26,10 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/auctions', [AuctionController::class, 'index'])
     ->name('auctions.index');
 
+// PENTING: Tambahkan 'whereNumber' agar tidak bentrok dengan route /auctions/create
 Route::get('/auctions/{auction}', [AuctionController::class, 'show'])
-    ->name('auctions.show');
+    ->name('auctions.show')
+    ->whereNumber('auction');
 
 
 /*
@@ -38,9 +45,11 @@ Route::middleware(['auth', 'role:admin'])
         Route::get('/dashboard', [AdminDashboardController::class, 'index'])
             ->name('dashboard');
 
+        // Manajemen Auction (Admin)
         Route::resource('auctions', AdminAuctionController::class)
             ->except(['show']);
 
+        // --- VERIFIKASI USER ---
         Route::get('/user-verification', [UserVerificationController::class, 'index'])
             ->name('users.verify.index');
 
@@ -49,6 +58,26 @@ Route::middleware(['auth', 'role:admin'])
 
         Route::post('/user-verification/{user}/reject', [UserVerificationController::class, 'reject'])
             ->name('users.verify.reject');
+
+        // --- VERIFIKASI ITEM ---
+        Route::get('/items-verification', [AdminItemController::class, 'index'])
+            ->name('items.index');
+
+        Route::post('/items-verification/{item}/approve', [AdminItemController::class, 'approve'])
+            ->name('items.approve');
+
+        Route::post('/items-verification/{item}/reject', [AdminItemController::class, 'reject'])
+            ->name('items.reject');
+
+        // --- [BARU] APPROVAL TRANSAKSI / PEMBAYARAN ---
+        Route::get('/transactions', [AdminTransactionController::class, 'index'])
+            ->name('transactions.index'); // Route: admin.transactions.index
+
+        Route::post('/transactions/{transaction}/approve', [AdminTransactionController::class, 'approve'])
+            ->name('transactions.approve');
+
+        Route::post('/transactions/{transaction}/reject', [AdminTransactionController::class, 'reject'])
+            ->name('transactions.reject');
     });
 
 
@@ -59,28 +88,47 @@ Route::middleware(['auth', 'role:admin'])
 */
 Route::middleware(['auth'])->group(function () {
 
-    // --- [FIXED] FEATURE BIDDING & BUYOUT ---
-    // Route ini menggunakan AuctionController yang baru kita edit
-    Route::post('/auctions/{auction}/bid', [BidController::class, 'store'])
+    // --- ITEM MANAGEMENT (MY ITEMS / INVENTORY) ---
+    Route::resource('items', ItemController::class);
+
+    // --- FEATURE MY AUCTIONS & CREATE ---
+    Route::get('/my-auctions', [AuctionController::class, 'myAuctions'])
+        ->name('auctions.my_auctions');
+
+    Route::get('/auctions/create', [AuctionController::class, 'create'])
+        ->name('auctions.create');
+
+    Route::post('/auctions', [AuctionController::class, 'store'])
+        ->name('auctions.store');
+
+
+    // --- FEATURE BIDDING & BUYOUT ---
+    Route::post('/auctions/{auction}/bid', [AuctionController::class, 'bid'])
         ->name('auctions.bid');
         
-    Route::post('/auctions/{auction}/buyout', [BidController::class, 'buyout'])
+    Route::post('/auctions/{auction}/buyout', [AuctionController::class, 'buyout'])
         ->name('auctions.buyout');
-    // ----------------------------------------
 
+
+    // --- [BARU] PEMBAYARAN / CHECKOUT (USER) ---
+    // Halaman form bayar
+    Route::get('/auctions/{auction}/checkout', [TransactionController::class, 'checkout'])
+        ->name('transactions.checkout');
+    
+    // Proses upload bukti bayar
+    Route::post('/auctions/{auction}/checkout', [TransactionController::class, 'store'])
+        ->name('transactions.store');
+    
+    // List transaksi user (Opsional jika ingin melihat riwayat bayar)
     Route::get('/transactions', [TransactionController::class, 'index'])
         ->name('transactions.index');
 
-        Route::get('/my-items', function() {
-    return "Halaman My Items belum dibuat"; // Placeholder sementara
-})->name('items.index');
 
-// Tambahkan ini di routes/web.php
-Route::get('/history', function() {
-    return "Halaman History belum dibuat";
-})->name('history.index');
+    // --- HISTORY ---
+    Route::get('/history', [HistoryController::class, 'index'])
+        ->name('history.index');
 
-    // Profile Routes
+    // --- PROFILE ---
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');

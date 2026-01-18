@@ -27,7 +27,7 @@ class ItemSeeder extends Seeder
             ]);
 
             Item::create([
-                'user_id' => 2,
+                'user_id' => 3,
                 'category_id' => 4,
                 'item_name' => 'SEASIDE VACATION (kutang)',
                 'rarity' => 'Epic',
@@ -37,7 +37,7 @@ class ItemSeeder extends Seeder
                 'is_verified' => true,
             ]);
              Item::create([
-                'user_id' => 2,
+                'user_id' => 4,
                 'category_id' => 8,
                 'item_name' => 'Algorithm Data',
                 'rarity' => 'Epic',
@@ -47,7 +47,7 @@ class ItemSeeder extends Seeder
                 'is_verified' => true,
             ]);
             Item::create([
-                'user_id' => 2,
+                'user_id' => 5,
                 'category_id' => 8,
                 'item_name' => 'Tof Byte',
                 'rarity' => 'Epic',
@@ -57,7 +57,7 @@ class ItemSeeder extends Seeder
                 'is_verified' => true,
             ]);
             Item::create([
-                'user_id' => 2,
+                'user_id' => 6,
                 'category_id' => 6,
                 'item_name' => 'Tata Comics',
                 'rarity' => 'Epic',
@@ -67,7 +67,7 @@ class ItemSeeder extends Seeder
                 'is_verified' => true,
             ]);
             Item::create([
-                'user_id' => 2,
+                'user_id' => 7,
                 'category_id' => 2,
                 'item_name' => 'AWP NAGA (lupa nama)',
                 'rarity' => 'Epic',
@@ -77,7 +77,7 @@ class ItemSeeder extends Seeder
                 'is_verified' => true,
             ]);
             Item::create([
-                'user_id' => 2,
+                'user_id' => 4,
                 'category_id' => 7,
                 'item_name' => 'EVOLUTION CUBE',
                 'rarity' => 'Epic',
@@ -87,7 +87,7 @@ class ItemSeeder extends Seeder
                 'is_verified' => true,
             ]);
             Item::create([
-                'user_id' => 2,
+                'user_id' => 3,
                 'category_id' => 3,
                 'item_name' => 'Heavenly Hound',
                 'rarity' => 'Epic',
@@ -97,7 +97,7 @@ class ItemSeeder extends Seeder
                 'is_verified' => true,
             ]);
             Item::create([
-                'user_id' => 2,
+                'user_id' => 5,
                 'category_id' => 5,
                 'item_name' => 'Speedy Lightwheel',
                 'rarity' => 'Epic',
