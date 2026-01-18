@@ -13,8 +13,9 @@
             <h4 class="font-bold text-sm">NEW ORDERS</h4>
             <p class="text-4xl font-black mt-2">56</p>
         </div>
-        
-        <div class="bg-red-400 border-3 border-black shadow-neo p-4 text-white"> <h4 class="font-bold text-sm text-black">REVENUE</h4>
+
+        <div class="bg-red-400 border-3 border-black shadow-neo p-4 text-white">
+            <h4 class="font-bold text-sm text-black">REVENUE</h4>
             <p class="text-4xl font-black mt-2 text-black">$8,400</p>
         </div>
     </div>
@@ -48,7 +49,7 @@
                 </tr>
             </tbody>
         </table>
-        
+
         <div class="mt-6 flex gap-4">
             <x-neo-button color="yellow">View All</x-neo-button>
             <x-neo-button color="white">Export PDF</x-neo-button>
