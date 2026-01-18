@@ -1,7 +1,7 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\AuctionController;
 use App\Http\Controllers\BidController;
 use App\Http\Controllers\TransactionController;
@@ -25,8 +25,8 @@ Route::middleware(['auth', 'role:admin'])
     ->name('admin.')
     ->group(function () {
 
-        Route::get('/dashboard', [AdminDashboardController::class, 'index'])
-            ->name('dashboard');
+        Route::get('/home', [AdminDashboardController::class, 'index'])
+            ->name('home');
 
         Route::resource('auctions', AdminAuctionController::class)
             ->except(['show']);
@@ -43,8 +43,8 @@ Route::middleware(['auth', 'role:admin'])
 
 Route::middleware(['auth'])->group(function () {
 
-    Route::get('/dashboard', [DashboardController::class, 'index'])
-        ->name('dashboard');
+    Route::get('/home', [HomeController::class, 'index'])
+        ->name('home');
 
     Route::get('/auctions', [AuctionController::class, 'index'])
         ->middleware('permission:view auction')
