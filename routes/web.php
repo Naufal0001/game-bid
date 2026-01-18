@@ -12,6 +12,12 @@ use App\Http\Controllers\Admin\PaymentVerificationController;
 use App\Http\Controllers\Admin\UserVerificationController;
 use Illuminate\Support\Facades\Route;
 
+/*
+|--------------------------------------------------------------------------
+| PUBLIC ROUTES (Bisa diakses Guest/Tanpa Login)
+|--------------------------------------------------------------------------
+*/
+
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
 Route::get('/auctions', [AuctionController::class, 'index'])
@@ -20,6 +26,12 @@ Route::get('/auctions', [AuctionController::class, 'index'])
 Route::get('/auctions/{auction}', [AuctionController::class, 'show'])
     ->name('auctions.show');
 
+
+/*
+|--------------------------------------------------------------------------
+| ADMIN ROUTES (Hanya untuk Role Admin)
+|--------------------------------------------------------------------------
+*/
 Route::middleware(['auth', 'role:admin'])
     ->prefix('admin')
     ->name('admin.')
@@ -41,22 +53,23 @@ Route::middleware(['auth', 'role:admin'])
             ->name('users.verify.reject');
     });
 
+
+/*
+|--------------------------------------------------------------------------
+| AUTHENTICATED ROUTES (Harus Login: User Biasa & Admin)
+|--------------------------------------------------------------------------
+*/
 Route::middleware(['auth'])->group(function () {
 
-    Route::get('/home', [HomeController::class, 'index'])
-        ->name('home');
-
-    Route::get('/auctions', [AuctionController::class, 'index'])
-        ->middleware('permission:view auction')
-        ->name('auctions.index');
-
+    // --- [FIXED] FEATURE BIDDING & BUYOUT ---
+    // Route ini menggunakan AuctionController yang baru kita edit
     Route::post('/auctions/{auction}/bid', [BidController::class, 'store'])
-        ->middleware('permission:bid auction')
-        ->name('bids.store');
-
+        ->name('auctions.bid');
+        
     Route::post('/auctions/{auction}/buyout', [BidController::class, 'buyout'])
-        ->middleware('permission:buyout auction')
         ->name('auctions.buyout');
+    // ----------------------------------------
+
 
     Route::get('/transactions/{transaction}', [PaymentController::class, 'show'])
         ->name('transactions.show');
@@ -65,26 +78,23 @@ Route::middleware(['auth'])->group(function () {
         [PaymentController::class, 'uploadProof']
         )->name('transactions.uploadProof');
 
-    Route::get('/profile', [ProfileController::class, 'edit'])
-        ->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])
-        ->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])
-        ->name('profile.destroy');
+    Route::get('/transactions', [TransactionController::class, 'index'])
+        ->name('transactions.index');
+
+
+     Route::get('/my-items', function() {
+        return "Halaman My Items belum dibuat"; // Placeholder sementara
+    })->name('items.index');
+
+    // Tambahkan ini di routes/web.php
+    Route::get('/history', function() {
+        return "Halaman History belum dibuat";
+    })->name('history.index');
+
+    // Profile Routes
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
-
-
-// Route::middleware('auth')->group(function () {
-//     Route::get('/auctions', [AuctionController::class, 'index'])->name('auctions.index');
-//     Route::get('/auctions/{id}', [AuctionController::class, 'show'])->name('auctions.show');
-//     Route::post('/auctions/{id}/bids', [BidController::class, 'store'])->name('bids.store');
-//     Route::post('/auctions/{auction}/buyout', [BidController::class, 'buyout'])->name('auctions.buyout');
-
-//     Route::get('/transactions', [TransactionController::class, 'index'])->name('transactions.index');
-
-//     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-//     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-//     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-// });
 
 require __DIR__.'/auth.php';
