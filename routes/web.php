@@ -7,8 +7,10 @@ use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\ItemController;
 use App\Http\Controllers\HistoryController;
 // Admin Controllers
+use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\Admin\AuctionController as AdminAuctionController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
+use App\Http\Controllers\Admin\PaymentVerificationController;
 use App\Http\Controllers\Admin\UserVerificationController;
 use App\Http\Controllers\Admin\ItemController as AdminItemController;
 use App\Http\Controllers\Admin\TransactionController as AdminTransactionController; // <--- [BARU] Controller Transaksi Admin
@@ -120,6 +122,13 @@ Route::middleware(['auth'])->group(function () {
         ->name('transactions.store');
     
     // List transaksi user (Opsional jika ingin melihat riwayat bayar)
+    Route::get('/transactions/{transaction}', [PaymentController::class, 'show'])
+        ->name('transactions.show');
+    
+    Route::post('/transactions/{transaction}/upload-proof',
+        [PaymentController::class, 'uploadProof']
+        )->name('transactions.uploadProof');
+
     Route::get('/transactions', [TransactionController::class, 'index'])
         ->name('transactions.index');
 
