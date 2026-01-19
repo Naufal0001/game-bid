@@ -2,31 +2,22 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Transaction extends Model
 {
-    protected $fillable = [
-        'auction_id',
-        'buyer_id',
-        'total_price',
-        'delivery_status',
-        'transaction_date',
-        'status',
-    ];
-
-    protected $dates = [
-        'transaction_date',
-    ];
+    use HasFactory;
+    protected $guarded = ['id'];
 
     public function auction()
     {
         return $this->belongsTo(Auction::class);
     }
 
-    public function buyer()
+    public function user()
     {
-        return $this->belongsTo(User::class, 'buyer_id');
+        return $this->belongsTo(User::class, 'user_id');
     }
 
     public function payment()

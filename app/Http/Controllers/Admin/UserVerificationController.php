@@ -13,9 +13,38 @@ class UserVerificationController extends Controller
      */
     public function index()
     {
-        $users = User::where('status', 'pending_verification')->get();
+        $query = User::query()
+        ->where('status', 'pending');
 
-        return view('admin.user-verification.index', compact('users'));
+        $request = request();
+
+        // 🔍 SEARCH
+        if ($request->filled('search')) {
+            $query->where(function ($q) use ($request) {
+                $q->where('username', 'like', "%{$request->search}%")
+                ->orWhere('email', 'like', "%{$request->search}%");
+            });
+        }
+
+        // ↕️ SORT
+        $sort = $request->get('sort', 'username');
+        $direction = $request->get('direction', 'asc');
+
+        $allowedSorts = ['username', 'email', 'created_at'];
+        if (!in_array($sort, $allowedSorts)) {
+            $sort = 'username';
+        }
+
+        $users = $query
+            ->orderBy($sort, $direction)
+            ->paginate(10)
+            ->withQueryString();
+
+        return view('admin.user-verification.index', compact(
+            'users',
+            'sort',
+            'direction'
+        ));
     }
 
     /**

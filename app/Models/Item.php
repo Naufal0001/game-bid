@@ -26,12 +26,13 @@ class Item extends Model
     // Item punya kategori
     public function category()
     {
-        return $this->belongsTo(Category::class);
+        return $this->belongsTo(Category::class, 'category_id');
     }
 
-    // Item bisa dilelang
-    public function auction()
+    // [PERBAIKAN] Mengubah hasOne 'auction' menjadi hasMany 'auctions'
+    // Agar kompatibel dengan kode Controller yang mengecek riwayat lelang
+    public function auctions()
     {
-        return $this->hasOne(Auction::class);
+        return $this->hasMany(Auction::class);
     }
 }

@@ -10,3 +10,6 @@ Artisan::command('inspire', function () {
 
 Schedule::command('auction:close-expired')
     ->everyMinute();
+
+Schedule::command('transactions:expire')
+    ->everyFiveMinutes();
