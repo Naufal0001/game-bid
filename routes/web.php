@@ -9,15 +9,33 @@ use App\Http\Controllers\Admin\AuctionController as AdminAuctionController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\UserVerificationController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Auth\SocialiteController; 
+use App\Http\Controllers\ItemController; // <--- Jangan lupa import di paling atas
+
+
+/*
+|--------------------------------------------------------------------------
+| Web Routes
+|--------------------------------------------------------------------------
+*/
+
+// =========================================================================
+// 1. PUBLIC ROUTES (Bisa diakses Guest & User)
+// =========================================================================
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
+// PENTING: Ditaruh di sini agar tombol "VIEW ALL AUCTIONS" di halaman depan bisa jalan
 Route::get('/auctions', [AuctionController::class, 'index'])
     ->name('auctions.index');
 
-Route::get('/auctions/{auction}', [AuctionController::class, 'show'])
-    ->name('auctions.show');
+// --- GOOGLE SOCIALITE LOGIN ---
 
+Route::get('/auth/google', [SocialiteController::class, 'redirect'])->name('google.login');
+Route::get('/auth/google/callback', [SocialiteController::class, 'callback']);
+// =========================================================================
+// 2. ADMIN ROUTES (Khusus Admin)
+// =========================================================================
 Route::middleware(['auth', 'role:admin'])
     ->prefix('admin')
     ->name('admin.')
@@ -39,15 +57,27 @@ Route::middleware(['auth', 'role:admin'])
             ->name('users.verify.reject');
     });
 
+
+// =========================================================================
+// 3. AUTHENTICATED ROUTES (Harus Login)
+// =========================================================================
 Route::middleware(['auth'])->group(function () {
 
     Route::get('/home', [HomeController::class, 'index'])
-        ->name('home');
+        ->name('dashboard'); // Biasanya /home itu dashboard user
+    Route::get('/my-items', [ItemController::class, 'index'])->name('items.index');
+    
+    // Kemungkinan route ini juga belum ada (lihat navbar baris 18)
+    Route::get('/history', function() { return 'History'; })->name('history.index');
+    // --- FITUR LELANG (Create & Store) ---
+    // Route ini WAJIB ada di atas route "show" agar tidak bentrok
+    Route::get('/auctions/create', [AuctionController::class, 'create'])
+        ->name('auctions.create');
 
-    Route::get('/auctions', [AuctionController::class, 'index'])
-        ->middleware('permission:view auction')
-        ->name('auctions.index');
+    Route::post('/auctions', [AuctionController::class, 'store'])
+        ->name('auctions.store');
 
+    // --- FITUR BID & BUYOUT ---
     Route::post('/auctions/{auction}/bid', [BidController::class, 'store'])
         ->middleware('permission:bid auction')
         ->name('bids.store');
@@ -56,30 +86,23 @@ Route::middleware(['auth'])->group(function () {
         ->middleware('permission:buyout auction')
         ->name('auctions.buyout');
 
+    // --- TRANSAKSI & PROFILE ---
     Route::get('/transactions', [TransactionController::class, 'index'])
         ->middleware('permission:view transaction')
         ->name('transactions.index');
 
-    Route::get('/profile', [ProfileController::class, 'edit'])
-        ->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])
-        ->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])
-        ->name('profile.destroy');
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
 
-// Route::middleware('auth')->group(function () {
-//     Route::get('/auctions', [AuctionController::class, 'index'])->name('auctions.index');
-//     Route::get('/auctions/{id}', [AuctionController::class, 'show'])->name('auctions.show');
-//     Route::post('/auctions/{id}/bids', [BidController::class, 'store'])->name('bids.store');
-//     Route::post('/auctions/{auction}/buyout', [BidController::class, 'buyout'])->name('auctions.buyout');
+// =========================================================================
+// 4. PUBLIC DETAIL ROUTE (Paling Bawah)
+// =========================================================================
+// Ditaruh paling bawah supaya tidak menganggap kata "create" sebagai ID lelang.
+Route::get('/auctions/{auction}', [AuctionController::class, 'show'])
+    ->name('auctions.show');
 
-//     Route::get('/transactions', [TransactionController::class, 'index'])->name('transactions.index');
-
-//     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-//     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-//     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-// });
 
 require __DIR__.'/auth.php';

@@ -12,15 +12,12 @@ class User extends Authenticatable
     use Notifiable, HasRoles, HasFactory;
 
     protected $fillable = [
-        'username',
-        'email',
-        'password',
-        'provider',
-        'provider_id',
-        'avatar',
-        'game_id',
-        'status',
-    ];
+    'name',
+    'email',
+    'password',
+    'username',   // <--- Tambahkan ini
+    'google_id',  // <--- Tambahkan ini (opsional, buat simpan ID google)
+];
 
     protected $hidden = [
         'password',

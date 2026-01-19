@@ -57,7 +57,7 @@
                     </button>
         
                     <div class="grid grid-cols-2 gap-3 mt-4">
-                        <a href="{{ url('auth/google') }}" class="flex justify-center items-center bg-yellow-400 border-[3px] border-black text-black font-black py-2 uppercase text-xs shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none transition-all">
+                        <a href="{{ route('google.login') }}" class="flex justify-center items-center bg-yellow-400 border-[3px] border-black text-black font-black py-2 uppercase text-xs shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none transition-all">
                             <img src="https://www.svgrepo.com/show/355037/google.svg" class="w-4 h-4 mr-2" alt="Google">
                             Google
                         </a>
