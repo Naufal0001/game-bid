@@ -1,26 +1,39 @@
 @extends('layouts.admin')
 
-@section('page_title', 'Dashboard')
-
 @section('content')
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <div class="bg-yellow-400 border-3 border-black shadow-neo p-4">
-            <h4 class="font-bold text-sm">TOTAL USERS</h4>
-            <p class="text-4xl font-black mt-2">1,204</p>
-        </div>
+    <div class="grid grid-cols-4 gap-4 mb-6">
+        @php
+            $cards = [
+                ['label' => 'Users', 'value' => $summary['users']],
+                ['label' => 'Items', 'value' => $summary['items']],
+                ['label' => 'Auctions', 'value' => $summary['auctions']],
+            ];
+        @endphp
 
-        <div class="bg-teal-400 border-3 border-black shadow-neo p-4">
-            <h4 class="font-bold text-sm">NEW ORDERS</h4>
-            <p class="text-4xl font-black mt-2">56</p>
-        </div>
+        @foreach ($cards as $card)
+            <div class="bg-white border-4 border-black shadow-[6px_6px_0_0_#000] p-4">
+                <p class="text-sm font-bold uppercase tracking-wide">
+                    {{ $card['label'] }}
+                </p>
+                <p class="text-3xl font-extrabold mt-2">
+                    {{ $card['value'] }}
+                </p>
+            </div>
+        @endforeach
 
-        <div class="bg-red-400 border-3 border-black shadow-neo p-4 text-white">
-            <h4 class="font-bold text-sm text-black">REVENUE</h4>
-            <p class="text-4xl font-black mt-2 text-black">$8,400</p>
+        {{-- Income --}}
+        <div class="bg-green-100 border-4 border-black shadow-[6px_6px_0_0_#000] p-4">
+            <p class="text-sm font-bold uppercase tracking-wide">
+                Total Income
+            </p>
+            <p class="text-3xl font-extrabold mt-2">
+                Rp {{ number_format($summary['income']) }}
+            </p>
         </div>
     </div>
 
-    <x-neo-card title="Recent Activity">
+
+    <x-neo-card title="Recent Activitys" class="mb-6">
         <table class="w-full text-left border-collapse">
             <thead>
                 <tr class="border-b-3 border-black">
@@ -54,5 +67,28 @@
             <x-neo-button color="yellow">View All</x-neo-button>
             <x-neo-button color="white">Export PDF</x-neo-button>
         </div>
+
     </x-neo-card>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 mt-6">
+
+        <x-neo-card title="Monthly Income">
+            <div class="h-56">
+                <canvas id="incomeChart"></canvas>
+            </div>
+        </x-neo-card>
+
+        <x-neo-card title="Transaction Status">
+            <div class="h-56 flex items-center justify-center">
+                <canvas id="transactionChart"></canvas>
+            </div>
+        </x-neo-card>
+
+        <x-neo-card title="Auction Status">
+            <div class="h-56">
+                <canvas id="auctionChart"></canvas>
+            </div>
+        </x-neo-card>
+
+    </div>
 @endsection

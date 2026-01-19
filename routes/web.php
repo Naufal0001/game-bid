@@ -8,12 +8,14 @@ use App\Http\Controllers\ItemController;
 use App\Http\Controllers\HistoryController;
 // Admin Controllers
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Admin\AuctionController as AdminAuctionController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\PaymentVerificationController;
 use App\Http\Controllers\Admin\UserVerificationController;
 use App\Http\Controllers\Admin\ItemController as AdminItemController;
 use App\Http\Controllers\Admin\TransactionController as AdminTransactionController; // <--- [BARU] Controller Transaksi Admin
+use App\Http\Controllers\Admin\ReportController as AdminReportController;
 
 use Illuminate\Support\Facades\Route;
 
@@ -47,40 +49,86 @@ Route::middleware(['auth', 'role:admin'])
         Route::get('/dashboard', [AdminDashboardController::class, 'index'])
             ->name('dashboard');
 
-        // Manajemen Auction (Admin)
-        Route::resource('auctions', AdminAuctionController::class)
-            ->except(['show']);
+        // =========================
+        // USER MANAGEMENT
+        // =========================
+        Route::get('/users', [AdminUserController::class, 'index'])
+            ->name('users.index');
 
-        // --- VERIFIKASI USER ---
+        Route::get('/users/{user}', [AdminUserController::class, 'show'])
+            ->name('users.show');
+
+        Route::patch('/users/{user}/status',[AdminUserController::class, 'updateStatus'])
+            ->name('users.status');
+
+        // =========================
+        // AUCTION MANAGEMENT
+        // =========================
+        Route::get('/auctions', [AdminAuctionController::class, 'index'])
+            ->name('auctions.index');
+
+        //edit auction
+        Route::get('/auctions/{auction}/edit', [AdminAuctionController::class, 'edit'])
+            ->name('auctions.edit');
+
+        Route::post('/auctions', [AdminAuctionController::class, 'store'])
+            ->name('auctions.store');
+
+        Route::put('/auctions/{auction}', [AdminAuctionController::class, 'update'])
+            ->name('auctions.update');
+
+        Route::patch('/auctions/{auction}/close', [AdminAuctionController::class, 'close'])
+            ->name('auctions.close');
+
+        Route::delete('/auctions/{auction}', [AdminAuctionController::class, 'destroy'])
+            ->name('auctions.destroy');
+
+        // =========================
+        // USER VERIFICATION
+        // =========================
         Route::get('/user-verification', [UserVerificationController::class, 'index'])
             ->name('users.verify.index');
 
-        Route::post('/user-verification/{user}/approve', [UserVerificationController::class, 'approve'])
+        Route::post('/user-verification/{user}/approve',
+            [UserVerificationController::class, 'approve'])
             ->name('users.verify.approve');
 
-        Route::post('/user-verification/{user}/reject', [UserVerificationController::class, 'reject'])
+        Route::post('/user-verification/{user}/reject',
+            [UserVerificationController::class, 'reject'])
             ->name('users.verify.reject');
 
-        // --- VERIFIKASI ITEM ---
+        // =========================
+        // ITEM VERIFICATION
+        // =========================
         Route::get('/items-verification', [AdminItemController::class, 'index'])
             ->name('items.index');
 
-        Route::post('/items-verification/{item}/approve', [AdminItemController::class, 'approve'])
+        Route::post('/items-verification/{item}/approve',
+            [AdminItemController::class, 'approve'])
             ->name('items.approve');
 
-        Route::post('/items-verification/{item}/reject', [AdminItemController::class, 'reject'])
+        Route::post('/items-verification/{item}/reject',
+            [AdminItemController::class, 'reject'])
             ->name('items.reject');
 
-        // --- [BARU] APPROVAL TRANSAKSI / PEMBAYARAN ---
+        // =========================
+        // TRANSACTION MANAGEMENT
+        // =========================
         Route::get('/transactions', [AdminTransactionController::class, 'index'])
-            ->name('transactions.index'); // Route: admin.transactions.index
+            ->name('transactions.index');
 
-        Route::post('/transactions/{transaction}/approve', [AdminTransactionController::class, 'approve'])
+        Route::post('/transactions/{transaction}/approve',
+            [AdminTransactionController::class, 'approve'])
             ->name('transactions.approve');
 
-        Route::post('/transactions/{transaction}/reject', [AdminTransactionController::class, 'reject'])
+        Route::post('/transactions/{transaction}/reject',
+            [AdminTransactionController::class, 'reject'])
             ->name('transactions.reject');
+
+        Route::get('/reports/transactions', [AdminReportController::class, 'transactions'])
+            ->name('reports.transactions');
     });
+
 
 
 /*

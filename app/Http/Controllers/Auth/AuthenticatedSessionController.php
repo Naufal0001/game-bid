@@ -29,6 +29,12 @@ class AuthenticatedSessionController extends Controller
 
         $user = Auth::user();
 
+        if ($user->status === 'suspended') {
+            Auth::logout();
+            return redirect()->route('login')
+                ->withErrors(['email' => 'Akun Anda disuspend.']);
+}
+
         if ($user->hasRole('admin')) {
             return redirect()->route('admin.dashboard');
         }

@@ -29,6 +29,8 @@ class TransactionSeeder extends Seeder
                 'game_uid'      => '88291022',       // KOLOM BARU
                 'payment_proof' => 'payments/dummy.jpg', // KOLOM BARU
                 'status'        => 'pending',
+                'created_at' => now(),
+                'payment_deadline' => now()->addHours(1), // KOLOM BARU
             ]);
             
             // Update status auction agar sinkron

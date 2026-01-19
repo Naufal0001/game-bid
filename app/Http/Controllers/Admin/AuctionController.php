@@ -12,14 +12,49 @@ class AuctionController extends Controller
 {
     public function index()
     {
-        $auctions = Auction::with('item')->latest()->paginate(10);
-        return view('admin.auction.index', compact('auctions'));
+        $query = Auction::with(['item']);
+        $request = request();
+
+        // 🔍 SEARCH (item name)
+        if ($request->filled('search')) {
+            $query->whereHas('item', function ($q) use ($request) {
+                $q->where('item_name', 'like', "%{$request->search}%");
+            });
+        }
+
+        // ↕️ SORT
+        $sort = $request->get('sort', 'created_at');
+        $direction = $request->get('direction', 'desc');
+
+        $allowedSorts = [
+            'starting_price',
+            'current_price',
+            'status',
+            'start_time',
+            'end_time',
+            'created_at'
+        ];
+
+        if (!in_array($sort, $allowedSorts)) {
+            $sort = 'created_at';
+        }
+
+        $auctions = $query
+            ->orderBy($sort, $direction)
+            ->paginate(10)
+            ->withQueryString();
+
+        return view('admin.auctions.index', compact(
+            'auctions',
+            'sort',
+            'direction'
+        ));
     }
 
     public function create()
     {
         $items = Item::doesntHave('auction')->get();
-        return view('admin.auction.create', compact('items'));
+        return view('admin.auctions.create', compact('items'));
     }
 
     public function store(Request $request)
@@ -48,7 +83,7 @@ class AuctionController extends Controller
 
     public function edit(Auction $auction)
     {
-        return view('admin.auction.edit', compact('auction'));
+        return view('admin.auctions.edit', compact('auction'));
     }
 
     public function update(Request $request, Auction $auction)
@@ -65,6 +100,20 @@ class AuctionController extends Controller
 
         return redirect()->route('admin.auctions.index')
             ->with('success', 'Auction berhasil diupdate');
+    }
+
+    public function close(Auction $auction)
+    {
+        if ($auction->status !== 'active') {
+            return back()->with('error', 'Auction sudah ditutup.');
+        }
+
+        $auction->update([
+            'status' => 'closed',
+            'end_time' => now(),
+        ]);
+
+        return back()->with('success', 'Auction berhasil ditutup.');
     }
 
     public function destroy(Auction $auction)

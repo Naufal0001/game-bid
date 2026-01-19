@@ -41,6 +41,8 @@ class TransactionController extends Controller
             'game_uid'      => $request->game_uid,
             'payment_proof' => 'storage/' . $path,
             'status'        => 'pending',
+            'created_at'    => now(),
+            'payment_deadline' => now()->addHours(1),
         ]);
 
         // Update Status Auction jadi 'pending_payment' (Menunggu Admin)
